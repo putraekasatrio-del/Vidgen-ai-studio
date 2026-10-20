@@ -1,0 +1,6 @@
+{
+  "name": "VIDGEN AI Studio",
+  "description": "Studio AI modern untuk pembuatan video dari teks, gambar, dan lip-sync dengan berbagai model resmi seperti Google Veo, Kling, dan Seedance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

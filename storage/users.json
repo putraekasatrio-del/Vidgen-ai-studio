@@ -1,0 +1,22 @@
+{
+  "user-kreator": {
+    "id": "user-kreator",
+    "name": "Kreator Studio",
+    "email": "kreator@vidgen.ai",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
+    "role": "kreator",
+    "creditBalance": 96,
+    "tier": "Creator Pro",
+    "generationsCount": 15
+  },
+  "user-admin": {
+    "id": "user-admin",
+    "name": "Administrator VIDGEN",
+    "email": "admin@vidgen.ai",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+    "role": "admin",
+    "creditBalance": 500,
+    "tier": "Studio Enterprise",
+    "generationsCount": 48
+  }
+}
