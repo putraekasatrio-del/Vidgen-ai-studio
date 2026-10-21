@@ -1,0 +1,9 @@
+
+{
+  "appId": "com.vidgen.ai",
+  "appName": "VIDGEN AI",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  }
+}
