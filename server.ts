@@ -1,3 +1,4 @@
+import { GoogleGenAI } from '@google/genai';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -290,29 +291,54 @@ app.get('/api/admin/providers', (req, res) => {
 });
 
 // Admin save key / update environment instructions
+
 app.post('/api/admin/test-connection', async (req, res) => {
   const { provider } = req.body;
-  const providers = getProviderStatusList();
-  const target = providers.find(p => p.provider === provider);
 
-  if (!target) {
-    return res.status(404).json({ error: 'Provider tidak ditemukan.' });
-  }
-
-  if (!target.isConfigured) {
-    return res.json({
+  if (provider !== 'google') {
+    return res.status(400).json({
       success: false,
-      message: `API Key untuk ${target.name} (${target.envKey}) belum terdeteksi di lingkungan server. Silakan atur environment variable server terlebih dahulu.`,
-      instructions: target.instructions,
+      message: 'Pengujian ini khusus untuk Google Gemini API.',
     });
   }
 
-  // If configured, run a sanity check
-  return res.json({
-    success: true,
-    message: `Koneksi ke endpoint resmi ${target.name} berhasil diverifikasi! API aktif dan siap menerima permintaan generasi.`,
-  });
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey || apiKey.trim().length < 10) {
+    return res.status(503).json({
+      success: false,
+      message:
+        'GEMINI_API_KEY belum tersedia di environment backend.',
+    });
+  }
+
+  try {
+    const ai = new GoogleGenAI({ apiKey });
+
+    const result = await ai.models.generateContent({
+      model: 'gemini-flash-latest',
+      contents: 'Balas hanya dengan kata: VIDGEN_OK',
+    });
+
+    return res.json({
+      success: true,
+      message: 'Permintaan ke Gemini berhasil.',
+      response: result.text,
+    });
+  } catch (error) {
+    console.error(
+      'Gemini connection test failed:',
+      error instanceof Error ? error.message : 'Unknown error'
+    );
+
+    return res.status(502).json({
+      success: false,
+      message:
+        'Gemini belum berhasil merespons. Periksa API Key, akses model, kuota, dan log server.',
+    });
+  }
 });
+
 
 // User profile & sessions
 app.get('/api/user/profile', (req, res) => {
