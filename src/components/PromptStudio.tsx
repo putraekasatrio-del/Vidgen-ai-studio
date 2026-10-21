@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Sparkles, 
   Video, 
@@ -142,6 +142,31 @@ export const PromptStudio: React.FC<PromptStudioProps> = ({
   const [negativePrompt, setNegativePrompt] = useState<string>('');
   const [showNegative, setShowNegative] = useState<boolean>(false);
   const [referenceImageUrl, setReferenceImageUrl] = useState<string>(prefilledImageForVideo || '');
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
+const handleImageUpload = (file?: File) => {
+  if (!file) return;
+
+  if (!file.type.startsWith('image/')) {
+    setErrorBanner('Pilih file gambar yang valid.');
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    if (typeof reader.result === 'string') {
+      setReferenceImageUrl(reader.result);
+      setErrorBanner(null);
+    }
+  };
+
+  reader.onerror = () => {
+    setErrorBanner('Gagal membaca gambar dari galeri.');
+  };
+
+  reader.readAsDataURL(file);
+};
   const [audioUrl, setAudioUrl] = useState<string>('');
   const [audioName, setAudioName] = useState<string>('');
 
@@ -432,6 +457,16 @@ export const PromptStudio: React.FC<PromptStudioProps> = ({
           </div>
 
           {/* Active Preview or Upload Dropzone */}
+          <input
+  ref={imageInputRef}
+  type="file"
+  accept="image/*"
+  hidden
+  onChange={(e) => {
+    handleImageUpload(e.target.files?.[0]);
+    e.currentTarget.value = '';
+  }}
+/>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             
             {/* Selected Image Preview */}
@@ -462,6 +497,13 @@ export const PromptStudio: React.FC<PromptStudioProps> = ({
             </div>
 
             {/* Quick Sample Presets */}
+            <button
+  type="button"
+  onClick={() => imageInputRef.current?.click()}
+  className="w-full rounded-xl bg-purple-600 px-4 py-3 text-sm font-bold text-white"
+>
+  Pilih Gambar dari Galeri HP
+</button>
             <div className="md:col-span-2 space-y-2">
               <p className="text-xs text-gray-400 font-medium">Atau pilih sampel gambar referensi:</p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
